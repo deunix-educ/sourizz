@@ -59,6 +59,19 @@ Run-time requirements:
 - **Wayland:** a compositor that implements `wlr-layer-shell` — see the [compatibility table](#x11-and-wayland).
 - **Optional:** `pw-play`, `paplay` or `aplay` for click sounds; a system tray that understands the StatusNotifierItem standard (KDE and Xfce do — tested; GNOME needs the *AppIndicator* extension, packaged as `gnome-shell-extension-appindicator` on Debian and Ubuntu — tested on GNOME 48.7; Cinnamon needs the `xapp-sn-watcher` package, which Debian only recommends — tested; MATE's panel has no support, so no icon — tested; elsewhere it depends on your panel — without a tray everything still works through the command line, hotkeys and the settings window); OpenGL for the settings window.
 
+### Running in the background
+
+`sourizz` with no subcommand *is* the daemon: it stays attached to the terminal that started it and runs until you stop it. There is no separate "resident" mode, so to keep it around:
+
+```sh
+setsid -f sourizz           # detached from the terminal: survives closing it
+sourizz status              # is it running?
+sourizz quit                # stop it
+sourizz autostart enable    # start it at every login (autostart disable to undo)
+```
+
+`autostart enable` writes `~/.config/autostart/sourizz.desktop` with the absolute path of the executable. KDE, GNOME, Xfce, Cinnamon and MATE run such entries at login (checked on KDE only). Hyprland and sway do not run them by default: put `exec-once = sourizz` in the Hyprland configuration, or `exec sourizz` in sway's. Start the daemon from inside the graphical session (autostart or the compositor's configuration) so that it inherits `WAYLAND_DISPLAY` or `DISPLAY`; a systemd user service does not always receive them, and none is provided.
+
 ## Using it
 
 **Tray icon.** Left click toggles everything; right click opens the menu with every effect, style pickers, annotation mode, settings and quit.

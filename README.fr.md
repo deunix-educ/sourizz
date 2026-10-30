@@ -59,6 +59,19 @@ Prérequis à l'exécution :
 - **Wayland :** un compositeur qui implémente `wlr-layer-shell` — voir le [tableau de compatibilité](#x11-et-wayland).
 - **Facultatif :** `pw-play`, `paplay` ou `aplay` pour les sons de clic ; une zone de notification compatible avec le standard StatusNotifierItem (KDE et Xfce le gèrent — testé ; GNOME demande l'extension *AppIndicator*, paquet `gnome-shell-extension-appindicator` sur Debian et Ubuntu — testé sur GNOME 48.7 ; Cinnamon demande le paquet `xapp-sn-watcher`, que Debian ne fait que recommander — testé ; le panneau de MATE ne le gère pas, donc pas d'icône — testé ; ailleurs cela dépend de votre tableau de bord — sans zone de notification, tout fonctionne quand même via la ligne de commande, les raccourcis et la fenêtre de réglages) ; OpenGL pour la fenêtre de réglages.
 
+### Lancement en arrière-plan
+
+`sourizz` sans sous-commande *est* le démon : il reste attaché au terminal qui l'a lancé et tourne jusqu'à ce que vous l'arrêtiez. Il n'y a pas de mode « résident » à part ; pour le garder actif :
+
+```sh
+setsid -f sourizz           # détaché du terminal : survit à sa fermeture
+sourizz status              # tourne-t-il ?
+sourizz quit                # l'arrêter
+sourizz autostart enable    # le lancer à chaque ouverture de session (autostart disable pour annuler)
+```
+
+`autostart enable` écrit `~/.config/autostart/sourizz.desktop` avec le chemin absolu de l'exécutable. KDE, GNOME, Xfce, Cinnamon et MATE exécutent ces entrées à l'ouverture de session (vérifié sur KDE uniquement). Hyprland et sway ne le font pas par défaut : ajoutez `exec-once = sourizz` à la configuration de Hyprland, ou `exec sourizz` à celle de sway. Lancez le démon depuis l'intérieur de la session graphique (autostart ou configuration du compositeur) pour qu'il hérite de `WAYLAND_DISPLAY` ou de `DISPLAY` ; un service systemd utilisateur ne les reçoit pas toujours, et aucun n'est fourni.
+
 ## Utilisation
 
 **Icône de notification.** Un clic gauche active/désactive tout ; un clic droit ouvre le menu avec chaque effet, le choix des styles, le mode annotation, les réglages et « Quitter ».

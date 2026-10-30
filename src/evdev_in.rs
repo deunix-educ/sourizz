@@ -11,6 +11,7 @@
 
 use crate::input::Button;
 use rustix::fd::{AsFd, BorrowedFd};
+use std::collections::HashSet;
 use std::path::PathBuf;
 
 pub const EV_KEY: u16 = 1;
@@ -86,13 +87,16 @@ pub fn translate(events: impl IntoIterator<Item = (u16, u16, i32)>) -> Vec<Raw> 
 
 pub struct Devices {
     devs: Vec<(PathBuf, evdev::Device)>,
+    /// Nodes already opened and found uninteresting (power button, audio jacks…). Opening a node
+    /// costs tens of milliseconds on some machines, so they must not be reopened on every rescan.
+    skipped: HashSet<PathBuf>,
     /// Devices that exist but could not be opened (permission denied).
     pub denied: usize,
 }
 
 impl Devices {
     pub fn scan() -> Devices {
-        let mut d = Devices { devs: Vec::new(), denied: 0 };
+        let mut d = Devices { devs: Vec::new(), skipped: HashSet::new(), denied: 0 };
         d.rescan();
         d
     }
@@ -110,11 +114,13 @@ impl Devices {
     /// Open any readable input device we do not have yet (cheap enough to call every few seconds).
     pub fn rescan(&mut self) {
         let Ok(dir) = std::fs::read_dir("/dev/input") else { return };
+        // A node that went away may come back under the same number as another device.
+        self.skipped.retain(|p| p.exists());
         let mut denied = 0;
         for entry in dir.flatten() {
             let path = entry.path();
             let is_event = path.file_name().and_then(|n| n.to_str()).is_some_and(|n| n.starts_with("event"));
-            if !is_event || self.devs.iter().any(|(p, _)| *p == path) {
+            if !is_event || self.skipped.contains(&path) || self.devs.iter().any(|(p, _)| *p == path) {
                 continue;
             }
             match evdev::Device::open(&path) {
@@ -124,7 +130,9 @@ impl Devices {
                         self.devs.push((path, dev));
                     }
                 }
-                Ok(_) => {}
+                Ok(_) => {
+                    self.skipped.insert(path);
+                }
                 Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => denied += 1,
                 Err(_) => {}
             }

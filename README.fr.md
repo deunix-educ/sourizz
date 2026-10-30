@@ -185,15 +185,13 @@ La session elle-même se choisit sur l'écran de connexion (par exemple « Plasm
 
 Limite connue : sur les sorties HiDPI avec un facteur d'échelle supérieur à 1, la surcouche est dessinée en 1× puis agrandie par le compositeur, ce qui la rend légèrement floue (les positions restent correctes).
 
-Limite connue : sous KDE Plasma Wayland (KWin 6.3.6, portable à GPU hybride Intel UHD 630 + NVIDIA MX250), le pointeur se fige environ une demi-seconde toutes les deux à trois secondes dès que Sourizz dessine quoi que ce soit, l'anneau seul compris. Cela n'arrive pas avec tous les effets coupés, ni sans Sourizz, ni en déplaçant une fenêtre. Sourizz lui-même n'est pas bloqué pendant ces gels, la zone qu'il redessine est petite et le thread principal de KWin n'est pas saturé : la cause n'est pas encore comprise, et couper la traînée n'y change rien. Sur une telle configuration, utilisez la session X11. L'anneau peut aussi traîner légèrement derrière un pointeur rapide sous Wayland, car sa position suit un chemin plus long (script KWin puis D-Bus) que les événements bruts XInput2 utilisés sous X11.
-
 ## Ce qui a été testé
 
 En toute honnêteté sur la vérification :
 
 - **Automatisé :** 57 tests unitaires (configuration, moteur, suivi des zones à redessiner, invariants de rendu, gestion des touches avec de vraies dispositions AZERTY/QWERTY, traduction evdev, analyse des commandes). En particulier, un test de propriété vérifie que le redessin incrémental est identique au pixel près à un redessin complet pour chaque forme de projecteur, style de traînée et effet de clic.
 - **X11 :** éprouvé en conditions réelles sous Debian 13, KDE Plasma 6.3, deux écrans — fenêtres de surcouche, traversée des clics, dessin de l'anneau / des clics / des traînées, aucun pixel fantôme après un mouvement rapide, raccourci global, ligne de commande, rechargement de la configuration en direct, menu de l'icône via D-Bus, fenêtre de réglages.
-- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland (voir la limite sur la traînée ci-dessus) : l'anneau suit le pointeur grâce au script KWin et les vrais périphériques souris, pavé tactile et clavier sont ouverts. **Non vérifié** en session réelle : effets et sons de clic, affichage des touches et mode annotation. **Non testé** en vrai HiDPI, sous GNOME, Hyprland, sway, niri ou d'autres compositeurs.
+- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland : l'anneau suit le pointeur grâce au script KWin et les vrais périphériques souris, pavé tactile et clavier sont ouverts. **Non vérifié** en session réelle : effets et sons de clic, affichage des touches et mode annotation. **Non testé** en vrai HiDPI, sous GNOME, Hyprland, sway, niri ou d'autres compositeurs.
 
 Considérez la prise en charge de Wayland comme une première version solide qui demande davantage de tests sur le terrain ; les rapports de bogues accompagnés de la sortie de `sourizz -vv` sont bienvenus.
 

@@ -181,10 +181,12 @@ impl Core {
     }
 
     fn open_settings(&mut self) {
-        if let Some(c) = &mut self.settings {
-            if matches!(c.try_wait(), Ok(None)) {
-                return; // already open
-            }
+        // A window that is still open may be buried under others, and KWin's focus-stealing prevention
+        // only makes the taskbar entry blink when another process asks it to rise: replace it with a
+        // fresh one, which always appears on top. The settings are saved as they change.
+        if let Some(mut c) = self.settings.take() {
+            let _ = c.kill();
+            let _ = c.wait();
         }
         let sibling = std::env::current_exe().ok().map(|p| p.with_file_name("sourizz-settings")).filter(|p| p.is_file());
         let program = sibling.unwrap_or_else(|| "sourizz-settings".into());

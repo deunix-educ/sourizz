@@ -78,6 +78,9 @@ Prérequis à l'exécution :
 | `Ctrl+Alt+Shift+F` | Mode focus |
 | `Ctrl+Alt+Shift+A` | Mode annotation |
 | `Ctrl+Alt+Shift+X` | Effacer les annotations |
+| `Ctrl+Alt+Shift+Y` | Montrer l'effet de clic à l'emplacement du pointeur |
+
+Le mode annotation et l'aperçu du clic activent ce dont ils ont besoin (l'interrupteur général, et les effets de clic pour l'aperçu) lorsque c'est éteint.
 
 **Dessiner.** Maintenez la touche `Ctrl` de droite et bougez le pointeur : un trait suit, puis s'efface après le relâchement. Pour plus de contrôle, ouvrez le **mode annotation** : une barre d'outils apparaît et la surcouche capture la souris et le clavier.
 

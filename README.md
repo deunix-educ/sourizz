@@ -78,6 +78,9 @@ Run-time requirements:
 | `Ctrl+Alt+Shift+F` | Focus mode |
 | `Ctrl+Alt+Shift+A` | Annotation mode |
 | `Ctrl+Alt+Shift+X` | Clear annotations |
+| `Ctrl+Alt+Shift+Y` | Show the click effect at the pointer |
+
+Annotation mode and the click preview switch on what they need (the master switch, and the click effects for the preview) when it is off.
 
 **Drawing.** Hold the right `Ctrl` key and move the pointer: a stroke follows and fades away after you release. For more control open the **annotation mode**: a toolbar appears and the overlay captures the mouse and keyboard.
 

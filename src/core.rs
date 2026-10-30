@@ -151,8 +151,23 @@ impl Core {
                 }
                 Err(e) => log::warn!("set {k}: {e}"),
             },
-            Command::ShowClick => self.engine.show_click(now),
-            Command::AnnotateToggle => self.engine.toggle_annotation_mode(),
+            Command::ShowClick => {
+                // Asking for a preview of the click effect must not silently do nothing: switch on what it needs.
+                if !self.cfg.general.enabled || !self.cfg.clicks.enabled {
+                    self.cfg.general.enabled = true;
+                    self.cfg.clicks.enabled = true;
+                    self.commit();
+                }
+                self.engine.show_click(now);
+            }
+            Command::AnnotateToggle => {
+                // Annotation mode only starts while the master switch is on; leaving it needs nothing.
+                if !self.cfg.general.enabled {
+                    self.cfg.general.enabled = true;
+                    self.commit();
+                }
+                self.engine.toggle_annotation_mode();
+            }
             Command::AnnotateClear => self.engine.clear_annotations(),
             Command::Reload => self.reload(),
             Command::Status(tx) => {

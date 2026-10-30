@@ -67,10 +67,13 @@ Run-time requirements:
 setsid -f sourizz           # detached from the terminal: survives closing it
 sourizz status              # is it running?
 sourizz quit                # stop it
+sourizz-restart             # stop it if it runs, then start a new one (extra arguments go to the new daemon)
 sourizz autostart enable    # start it at every login (autostart disable to undo)
 ```
 
-`autostart enable` writes `~/.config/autostart/sourizz.desktop` with the absolute path of the executable. KDE, GNOME, Xfce, Cinnamon and MATE run such entries at login (checked on KDE only). Hyprland and sway do not run them by default: put `exec-once = sourizz` in the Hyprland configuration, or `exec sourizz` in sway's. Start the daemon from inside the graphical session (autostart or the compositor's configuration) so that it inherits `WAYLAND_DISPLAY` or `DISPLAY`; a systemd user service does not always receive them, and none is provided.
+`sourizz-restart` is a small shell script installed next to `sourizz`; `SOURIZZ_LOG=sourizz.log sourizz-restart -vv` restarts the daemon with debug output kept in that file.
+
+`autostart enable` writes `~/.config/autostart/sourizz.desktop` with the absolute path of the executable. KDE, GNOME, Xfce, Cinnamon and MATE run such entries at login (checked on all five). Hyprland and sway do not run them by default: put `exec-once = sourizz` in the Hyprland configuration, or `exec sourizz` in sway's. Start the daemon from inside the graphical session (autostart or the compositor's configuration) so that it inherits `WAYLAND_DISPLAY` or `DISPLAY`; a systemd user service does not always receive them, and none is provided.
 
 ## Using it
 
@@ -176,7 +179,7 @@ Sourizz has one drawing engine and two display backends; it picks the right one 
 
 By default Sourizz follows your session: it uses Wayland when `WAYLAND_DISPLAY` is set and `$XDG_SESSION_TYPE` is not `x11`, and X11 otherwise. `sourizz doctor` prints the session and the backend that will be used (`echo $XDG_SESSION_TYPE` also tells you which session you are in).
 
-To force one, use `sourizz --backend x11` or `--backend wayland`, or set `backend = "x11"` (`"wayland"`, `"auto"`) under `[general]` in the config file — the settings window has it in the *General* tab. The command-line flag wins over the file. The backend is chosen at start-up, so **restart the daemon** after changing it. Forcing X11 inside a Wayland session is rarely useful: an X11 program there generally only sees the pointer while it is over other X11 windows.
+To force one, use `sourizz --backend x11` or `--backend wayland`, or set `backend = "x11"` (`"wayland"`, `"auto"`) under `[general]` in the config file — the settings window has it in the *General* tab. The command-line flag wins over the file. The backend is chosen at start-up, so **restart the daemon** after changing it (`sourizz-restart` does it). Forcing X11 inside a Wayland session is rarely useful: an X11 program there generally only sees the pointer while it is over other X11 windows.
 
 The session itself is chosen at the login screen (for example "Plasma (X11)" or "Plasma (Wayland)").
 

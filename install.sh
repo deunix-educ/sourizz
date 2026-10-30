@@ -78,7 +78,7 @@ ensure_rust() {
 }
 
 if [[ $UNINSTALL -eq 1 ]]; then
-    rm -fv "$BIN/sourizz" "$BIN/sourizz-settings" "$APPS/sourizz.desktop" "$APPS/sourizz-settings.desktop" "$ICONS/sourizz.svg" "$DOCS/LICENSE"
+    rm -fv "$BIN/sourizz" "$BIN/sourizz-settings" "$BIN/sourizz-restart" "$APPS/sourizz.desktop" "$APPS/sourizz-settings.desktop" "$ICONS/sourizz.svg" "$DOCS/LICENSE"
     rmdir "$DOCS" 2>/dev/null || true
     rm -fv "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/sourizz.desktop"
     echo "Uninstalled. Your settings in ${XDG_CONFIG_HOME:-$HOME/.config}/sourizz were kept."
@@ -90,6 +90,7 @@ ensure_rust
 cargo build --release
 install -Dm755 target/release/sourizz "$BIN/sourizz"
 install -Dm755 target/release/sourizz-settings "$BIN/sourizz-settings"
+install -Dm755 packaging/sourizz-restart "$BIN/sourizz-restart"
 install -Dm644 packaging/sourizz.svg "$ICONS/sourizz.svg"
 install -Dm644 LICENSE "$DOCS/LICENSE"
 # Use absolute paths so the launchers work even when ~/.local/bin is not on the desktop's PATH.

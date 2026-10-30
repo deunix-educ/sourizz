@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Restart the Sourizz daemon: stop the running one (if any), wait until it is gone, start a new one
+# detached from the terminal. Extra arguments go to the new daemon, e.g. `sourizz-restart --backend x11`.
+# Set SOURIZZ_LOG=<file> to keep its output (useful with -vv); it is discarded otherwise.
+# Run it from inside your graphical session so the daemon inherits DISPLAY / WAYLAND_DISPLAY.
+set -euo pipefail
+
+here="$(dirname "$(readlink -f "$0")")"
+if [[ -x "$here/sourizz" ]]; then
+    sourizz="$here/sourizz"
+elif sourizz="$(command -v sourizz)"; then
+    :
+else
+    echo "sourizz-restart: cannot find the sourizz executable." >&2
+    exit 1
+fi
+
+# Poll `status` (it fails while no daemon answers) until it matches the wanted state, for about 5 s.
+wait_for() {
+    local want_running=$1 i
+    for ((i = 0; i < 50; i++)); do
+        if "$sourizz" status >/dev/null 2>&1; then
+            [[ $want_running -eq 1 ]] && return 0
+        else
+            [[ $want_running -eq 0 ]] && return 0
+        fi
+        sleep 0.1
+    done
+    return 1
+}
+
+if "$sourizz" status >/dev/null 2>&1; then
+    "$sourizz" quit >/dev/null 2>&1 || true
+    wait_for 0 || { echo "sourizz-restart: the running daemon did not stop within 5 s." >&2; exit 1; }
+fi
+
+log="${SOURIZZ_LOG:-/dev/null}"
+if command -v setsid >/dev/null; then
+    setsid -f "$sourizz" "$@" >"$log" 2>&1 </dev/null
+else
+    nohup "$sourizz" "$@" >"$log" 2>&1 </dev/null &
+fi
+
+wait_for 1 || { echo "sourizz-restart: the new daemon did not come up; run 'sourizz -vv' in a terminal to see why." >&2; exit 1; }
+echo "Sourizz restarted."

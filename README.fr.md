@@ -67,10 +67,13 @@ Prérequis à l'exécution :
 setsid -f sourizz           # détaché du terminal : survit à sa fermeture
 sourizz status              # tourne-t-il ?
 sourizz quit                # l'arrêter
+sourizz-restart             # l'arrêter s'il tourne, puis en lancer un nouveau (les arguments en plus vont au nouveau démon)
 sourizz autostart enable    # le lancer à chaque ouverture de session (autostart disable pour annuler)
 ```
 
-`autostart enable` écrit `~/.config/autostart/sourizz.desktop` avec le chemin absolu de l'exécutable. KDE, GNOME, Xfce, Cinnamon et MATE exécutent ces entrées à l'ouverture de session (vérifié sur KDE uniquement). Hyprland et sway ne le font pas par défaut : ajoutez `exec-once = sourizz` à la configuration de Hyprland, ou `exec sourizz` à celle de sway. Lancez le démon depuis l'intérieur de la session graphique (autostart ou configuration du compositeur) pour qu'il hérite de `WAYLAND_DISPLAY` ou de `DISPLAY` ; un service systemd utilisateur ne les reçoit pas toujours, et aucun n'est fourni.
+`sourizz-restart` est un petit script shell installé à côté de `sourizz` ; `SOURIZZ_LOG=sourizz.log sourizz-restart -vv` relance le démon en gardant sa sortie de débogage dans ce fichier.
+
+`autostart enable` écrit `~/.config/autostart/sourizz.desktop` avec le chemin absolu de l'exécutable. KDE, GNOME, Xfce, Cinnamon et MATE exécutent ces entrées à l'ouverture de session (vérifié sur les cinq). Hyprland et sway ne le font pas par défaut : ajoutez `exec-once = sourizz` à la configuration de Hyprland, ou `exec sourizz` à celle de sway. Lancez le démon depuis l'intérieur de la session graphique (autostart ou configuration du compositeur) pour qu'il hérite de `WAYLAND_DISPLAY` ou de `DISPLAY` ; un service systemd utilisateur ne les reçoit pas toujours, et aucun n'est fourni.
 
 ## Utilisation
 
@@ -176,7 +179,7 @@ Sourizz a un seul moteur de dessin et deux backends d'affichage ; il choisit le 
 
 Par défaut, Sourizz suit votre session : il utilise Wayland si `WAYLAND_DISPLAY` est défini et que `$XDG_SESSION_TYPE` n'est pas `x11`, et X11 sinon. `sourizz doctor` affiche la session et le backend qui sera utilisé (`echo $XDG_SESSION_TYPE` indique aussi dans quelle session vous êtes).
 
-Pour en imposer un, utilisez `sourizz --backend x11` ou `--backend wayland`, ou écrivez `backend = "x11"` (`"wayland"`, `"auto"`) sous `[general]` dans le fichier de configuration — la fenêtre de réglages l'offre dans l'onglet *Général*. L'option de la ligne de commande l'emporte sur le fichier. Le backend est choisi au démarrage : **relancez le démon** après l'avoir changé. Imposer X11 dans une session Wayland est rarement utile : un programme X11 n'y voit généralement le pointeur que lorsqu'il est au-dessus d'autres fenêtres X11.
+Pour en imposer un, utilisez `sourizz --backend x11` ou `--backend wayland`, ou écrivez `backend = "x11"` (`"wayland"`, `"auto"`) sous `[general]` dans le fichier de configuration — la fenêtre de réglages l'offre dans l'onglet *Général*. L'option de la ligne de commande l'emporte sur le fichier. Le backend est choisi au démarrage : **relancez le démon** après l'avoir changé (`sourizz-restart` le fait). Imposer X11 dans une session Wayland est rarement utile : un programme X11 n'y voit généralement le pointeur que lorsqu'il est au-dessus d'autres fenêtres X11.
 
 La session elle-même se choisit sur l'écran de connexion (par exemple « Plasma (X11) » ou « Plasma (Wayland) »).
 

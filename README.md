@@ -41,7 +41,7 @@ Differences and gaps:
 
 ## Install
 
-**Works on** KDE Plasma (X11 and Wayland), GNOME on Xorg, Xfce, and X11 desktops with a compositor; wlroots-based Wayland compositors (Hyprland, sway…) should work but are untested. **Does not work on GNOME's default Wayland session.** Details in the [compatibility table](#x11-and-wayland).
+**Works on** KDE Plasma (X11 and Wayland), GNOME on Xorg, Xfce, Cinnamon, and X11 desktops with a compositor; wlroots-based Wayland compositors (Hyprland, sway…) should work but are untested. **Does not work on GNOME's default Wayland session.** Details in the [compatibility table](#x11-and-wayland).
 
 You need a recent stable [Rust toolchain](https://rustup.rs) (developed with 1.98; the crate uses edition 2024). **No `-dev` packages are required**: the build is pure Rust and loads `libxkbcommon` at run time. The first build takes a few minutes because the settings window pulls in egui; `cargo build --release --no-default-features` builds the daemon alone. If Rust is missing, `./install.sh` offers to install it with rustup (it needs `curl` or `wget` and a C linker such as `build-essential`; add `--yes` to skip the question).
 
@@ -82,7 +82,7 @@ Run-time requirements:
 | `Ctrl+Alt+Shift+X` | Clear annotations |
 | `Ctrl+Alt+Shift+Y` | Show the click effect at the pointer |
 
-The ring used to default to `Ctrl+Alt+Shift+R`, which GNOME Shell takes for its screen-recording interface; a config file that still has it keeps it, so change it in the settings window on GNOME.
+The ring used to default to `Ctrl+Alt+Shift+R`, which GNOME Shell and Cinnamon take for their screen-recording shortcut; a config file that still has it keeps it, so change it in the settings window on those desktops.
 
 Annotation mode and the click preview switch on what they need (the master switch, and the click effects for the preview) when it is off.
 
@@ -149,7 +149,8 @@ Sourizz has one drawing engine and two display backends; it picks the right one 
 | **KDE Plasma, X11** | tested | yes | exact | yes, via XInput2 | yes |
 | **GNOME on Xorg** (GNOME 48 and earlier) | tested on 48.7 | yes | exact | yes, via XInput2 | yes |
 | **Xfce** (X11) | tested on 4.20 (xfwm4 compositing, on by default) | yes | exact | yes, via XInput2 | yes |
-| Other X11 desktops with a compositor (Cinnamon, MATE, i3, openbox…) | not tested, expected to work | yes | exact | yes, via XInput2 | yes |
+| **Cinnamon** (X11) | tested on 6.4 | yes | exact | yes, via XInput2 | yes |
+| Other X11 desktops with a compositor (MATE, i3, openbox…) | not tested, expected to work | yes | exact | yes, via XInput2 | yes |
 | **KDE Plasma, Wayland** | tested on 6.3.6 | yes | exact, via a KWin script | needs the `input` group | – |
 | Hyprland | not tested, expected to work | yes | exact, via its IPC socket | needs the `input` group | – |
 | sway, river, niri, labwc, COSMIC… | not tested, expected to work | yes | *estimated* (see below) | needs the `input` group | – |
@@ -198,7 +199,7 @@ Being honest about verification:
 
 - **Automated:** 57 unit tests (config, engine, damage tracking, rendering invariants, key handling with real AZERTY/QWERTY layouts, evdev translation, IPC parsing). Notably, a property test checks that incremental repainting is pixel-identical to a full repaint for every spotlight shape, trail style and click effect.
 - **X11:** exercised live on Debian 13, KDE Plasma 6.3, two monitors — overlay windows, click-through, ring/click/trail drawing, no ghost pixels after fast motion, global hotkey, CLI, live config reload, tray menu over D-Bus, settings window.
-- **Wayland:** exercised against a nested **KWin 6.3** compositor — layer-shell overlay, ring/spotlight/annotation toolbar rendering, annotation mode capture, the KWin pointer script. Also run in a real KDE Plasma 6.3.6 Wayland session: the ring follows the pointer through the KWin script, and the click effects, click sounds, keystroke display, spotlight and annotation mode work with the real mouse, touchpad and keyboard. **GNOME 48.7 (Debian 13), Wayland session:** Sourizz refuses to start with a clear message, as intended, and the X11 backend through XWayland only follows the pointer over X11 windows. **GNOME 48.7 on Xorg:** the X11 backend passes the 12 checks of `examples/x11_probe.rs` (run against a default-config daemon with the ring pulse off), the global hotkeys work, and the spotlight, keystroke display, click effects, click sounds, annotation mode and settings window work; the tray icon and its menu work once the AppIndicator extension is installed and enabled (without it there is no icon). **Xfce 4.20 (Xorg):** the same 12 automatic checks pass, the global hotkeys work, and the ring, trail, spotlight, keystroke display, click effects and sounds, annotation mode, settings window and tray icon with its menu work. **Not tested** on real HiDPI, or Hyprland, sway, niri or other compositors.
+- **Wayland:** exercised against a nested **KWin 6.3** compositor — layer-shell overlay, ring/spotlight/annotation toolbar rendering, annotation mode capture, the KWin pointer script. Also run in a real KDE Plasma 6.3.6 Wayland session: the ring follows the pointer through the KWin script, and the click effects, click sounds, keystroke display, spotlight and annotation mode work with the real mouse, touchpad and keyboard. **GNOME 48.7 (Debian 13), Wayland session:** Sourizz refuses to start with a clear message, as intended, and the X11 backend through XWayland only follows the pointer over X11 windows. **GNOME 48.7 on Xorg:** the X11 backend passes the 12 checks of `examples/x11_probe.rs` (run against a default-config daemon with the ring pulse off), the global hotkeys work, and the spotlight, keystroke display, click effects, click sounds, annotation mode and settings window work; the tray icon and its menu work once the AppIndicator extension is installed and enabled (without it there is no icon). **Cinnamon 6.4 (X11):** the same 12 automatic checks pass, the global hotkeys work, and the ring, trail, spotlight, keystroke display, click effects and sounds, annotation mode, settings window and tray icon with its menu work (the icon needs the `xapp-sn-watcher` package, which Debian only recommends, and it appears by itself when Sourizz is started at login). **Xfce 4.20 (Xorg):** the same 12 automatic checks pass, the global hotkeys work, and the ring, trail, spotlight, keystroke display, click effects and sounds, annotation mode, settings window and tray icon with its menu work. **Not tested** on real HiDPI, or Hyprland, sway, niri or other compositors.
 
 Treat Wayland support as a solid first version that needs more field testing; bug reports with `sourizz -vv` output are welcome.
 

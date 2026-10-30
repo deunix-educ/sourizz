@@ -550,7 +550,8 @@ pub fn run(core: Core, wake: &OwnedFd) -> Result<()> {
     let layer_shell = LayerShell::bind(&globals, &qh).map_err(|_| {
         anyhow!(
             "this compositor does not support wlr-layer-shell, which Sourizz needs to draw its overlay.\n\
-             GNOME (Mutter) is the usual case: log in with a \"GNOME on Xorg\" session, or use KDE Plasma, Hyprland, sway, …"
+             GNOME (Mutter) is the usual case, and its Wayland session is not supported. Log in with a \"GNOME on Xorg\" session if your GNOME \
+             still offers one (GNOME 49 and later do not), or use KDE Plasma, Hyprland, sway, …"
         )
     })?;
     let shm = Shm::bind(&globals, &qh).context("compositor lacks wl_shm")?;

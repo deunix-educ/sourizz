@@ -2,11 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> **Pending:** the GNOME part of the field test is still to do (KDE Wayland is done). If that is why you are here, read `docs/handoff-wayland-gnome.md` first.
-
 ## What this is
 
 Sourizz is a Linux cursor highlighter (spotlight, ring, trails, click effects, keystroke display, on-screen drawing) for X11 and Wayland, written in Rust. It is an independent re-implementation of the idea behind the macOS app Mouzz. READMEs exist in English (`README.md`) and French (`README.fr.md`); keep them in sync. Licensed `AGPL-3.0-or-later` (`LICENSE`): new dependencies must be licence-compatible (MIT/Apache-2.0/BSD-style are fine).
+
+GNOME's default Wayland session is **deliberately unsupported** (decision of 2026-10-30, stated in both READMEs): Mutter has no layer-shell and a GNOME Shell extension was judged too costly. Sourizz runs on GNOME only through its Xorg session (GNOME 48 and earlier). Do not start extension work unless Denis asks for it.
 
 ## Commands
 

@@ -41,6 +41,8 @@ Differences and gaps:
 
 ## Install
 
+**Works on** KDE Plasma (X11 and Wayland), GNOME on Xorg, and X11 desktops with a compositor; wlroots-based Wayland compositors (Hyprland, sway…) should work but are untested. **Does not work on GNOME's default Wayland session.** Details in the [compatibility table](#x11-and-wayland).
+
 You need a recent stable [Rust toolchain](https://rustup.rs) (developed with 1.98; the crate uses edition 2024). **No `-dev` packages are required**: the build is pure Rust and loads `libxkbcommon` at run time. The first build takes a few minutes because the settings window pulls in egui; `cargo build --release --no-default-features` builds the daemon alone. If Rust is missing, `./install.sh` offers to install it with rustup (it needs `curl` or `wget` and a C linker such as `build-essential`; add `--yes` to skip the question).
 
 ```sh
@@ -142,15 +144,17 @@ spotlight = "Ctrl+Alt+Shift+S"
 
 Sourizz has one drawing engine and two display backends; it picks the right one automatically (`--backend x11|wayland` or `general.backend` to force one).
 
-| Session | Overlay | Pointer position | Clicks and keys | Focus mode |
-|---|---|---|---|---|
-| **X11** (any compositing WM) | yes | exact | yes, via XInput2 | yes |
-| **KDE Plasma, Wayland** | yes | exact, via a KWin script | needs the `input` group | – |
-| **Hyprland** | yes | exact, via its IPC socket | needs the `input` group | – |
-| sway, river, niri, labwc, COSMIC… | yes | *estimated* (see below) | needs the `input` group | – |
-| **GNOME, Wayland** | **no** — Mutter has no layer-shell | – | – | – |
+| Desktop / session | Status | Overlay | Pointer position | Clicks and keys | Focus mode |
+|---|---|---|---|---|---|
+| **KDE Plasma, X11** | tested | yes | exact | yes, via XInput2 | yes |
+| **GNOME on Xorg** (GNOME 48 and earlier) | tested on 48.7 | yes | exact | yes, via XInput2 | yes |
+| Other X11 desktops with a compositor (Xfce, Cinnamon, MATE, i3, openbox…) | not tested, expected to work | yes | exact | yes, via XInput2 | yes |
+| **KDE Plasma, Wayland** | tested on 6.3.6 | yes | exact, via a KWin script | needs the `input` group | – |
+| Hyprland | not tested, expected to work | yes | exact, via its IPC socket | needs the `input` group | – |
+| sway, river, niri, labwc, COSMIC… | not tested, expected to work | yes | *estimated* (see below) | needs the `input` group | – |
+| **GNOME, Wayland** (GNOME's default session) | **not supported** | no — Mutter has no layer-shell | – | – | – |
 
-On GNOME, log in with a **"GNOME on Xorg"** session, or use another desktop. (A GNOME Shell extension could do it natively; that is not written yet.) Running `sourizz --backend x11` inside a GNOME Wayland session (through XWayland) starts, but is not a workaround: the pointer is only tracked while it is over an X11 window, and the ring stays frozen over native Wayland windows (tested on GNOME 48.7).
+**GNOME's default Wayland session is not supported.** Mutter has no `wlr-layer-shell`, so Sourizz cannot draw its overlay there and stops with an explanatory message. Running `sourizz --backend x11` through XWayland starts but is no workaround: the pointer is only tracked while it is over an X11 window (tested on GNOME 48.7). Sourizz does work in a **"GNOME on Xorg"** session, but GNOME 49 and later no longer ship one (Ubuntu 25.10 and Fedora 43 already dropped it), so on those releases it does not run on GNOME at all. A GNOME Shell extension could change that; it is not written yet.
 
 ### Choosing the backend
 

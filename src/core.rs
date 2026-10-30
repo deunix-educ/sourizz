@@ -66,7 +66,9 @@ impl Core {
     pub fn start_tray(&mut self) {
         use ksni::blocking::TrayMethods;
         let tray = TrayIcon { cfg: self.cfg.clone(), lang: Lang::resolve(&self.cfg.general.language), hub: self.hub.clone() };
-        match tray.spawn() {
+        // The session may start us before its panel publishes the notification area (autostart at
+        // login): keep waiting for it rather than giving up, and the icon shows up once it exists.
+        match tray.assume_sni_available(true).spawn() {
             Ok(h) => self.tray = Some(h),
             Err(e) => log::warn!("no system tray ({e}); control the daemon with the `sourizz` CLI or hotkeys"),
         }

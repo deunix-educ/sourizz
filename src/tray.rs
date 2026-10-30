@@ -96,6 +96,15 @@ impl ksni::Tray for TrayIcon {
         String::new()
     }
 
+    fn watcher_online(&self) {
+        log::info!("system tray available");
+    }
+
+    fn watcher_offline(&self, reason: ksni::OfflineReason) -> bool {
+        log::info!("no system tray for now ({reason:?}); the icon appears when one starts");
+        true
+    }
+
     /// Left click toggles everything.
     fn activate(&mut self, _x: i32, _y: i32) {
         self.hub.send(Command::Toggle("all".into()));

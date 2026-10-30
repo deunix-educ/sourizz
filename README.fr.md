@@ -41,7 +41,7 @@ Différences et manques :
 
 ## Installation
 
-Il faut une [chaîne d'outils Rust](https://rustup.rs) stable récente (développé avec la 1.98 ; le projet utilise l'édition 2024). **Aucun paquet `-dev` n'est nécessaire** : la compilation est en Rust pur et charge `libxkbcommon` à l'exécution. La première compilation prend quelques minutes car la fenêtre de réglages embarque egui ; `cargo build --release --no-default-features` compile le démon seul.
+Il faut une [chaîne d'outils Rust](https://rustup.rs) stable récente (développé avec la 1.98 ; le projet utilise l'édition 2024). **Aucun paquet `-dev` n'est nécessaire** : la compilation est en Rust pur et charge `libxkbcommon` à l'exécution. La première compilation prend quelques minutes car la fenêtre de réglages embarque egui ; `cargo build --release --no-default-features` compile le démon seul. Si Rust est absent, `./install.sh` propose de l'installer avec rustup (il faut `curl` ou `wget` et un éditeur de liens C comme `build-essential` ; ajoutez `--yes` pour ne pas poser la question).
 
 ```sh
 git clone <ce dépôt> sourizz && cd sourizz

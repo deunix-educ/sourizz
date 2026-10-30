@@ -16,7 +16,7 @@ cargo test --lib engine::tests::shake    # one test (name filter)
 cargo clippy --all-targets && cargo fmt  # both must stay clean (rustfmt.toml: max_width 140)
 cargo run --release -- demo out/         # render every effect to PNG, no display needed
 cargo run -- -vv --no-tray               # run the daemon verbosely (-vv = debug for the sourizz crate only)
-./install.sh [--uninstall]               # user install into ~/.local
+./install.sh [--uninstall] [--yes]       # user install into ~/.local; offers to install Rust via rustup if cargo is missing
 ```
 
 `examples/x11_probe.rs` is an end-to-end check against a running X11 daemon (also `fake_keys`, `mover` helpers). Run the daemon with an isolated config: `XDG_CONFIG_HOME=<tmp> sourizz --no-tray`. The probe only touches its own test window, but a human moving the real mouse during the run makes it fail.

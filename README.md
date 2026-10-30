@@ -41,7 +41,7 @@ Differences and gaps:
 
 ## Install
 
-You need a recent stable [Rust toolchain](https://rustup.rs) (developed with 1.98; the crate uses edition 2024). **No `-dev` packages are required**: the build is pure Rust and loads `libxkbcommon` at run time. The first build takes a few minutes because the settings window pulls in egui; `cargo build --release --no-default-features` builds the daemon alone.
+You need a recent stable [Rust toolchain](https://rustup.rs) (developed with 1.98; the crate uses edition 2024). **No `-dev` packages are required**: the build is pure Rust and loads `libxkbcommon` at run time. The first build takes a few minutes because the settings window pulls in egui; `cargo build --release --no-default-features` builds the daemon alone. If Rust is missing, `./install.sh` offers to install it with rustup (it needs `curl` or `wget` and a C linker such as `build-essential`; add `--yes` to skip the question).
 
 ```sh
 git clone <this repository> sourizz && cd sourizz

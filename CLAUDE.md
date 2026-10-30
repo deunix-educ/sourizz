@@ -21,7 +21,7 @@ cargo run -- -vv --no-tray               # run the daemon verbosely (-vv = debug
 ./install.sh [--uninstall] [--yes]       # user install into ~/.local; offers to install Rust via rustup if cargo is missing
 ```
 
-`examples/x11_probe.rs` is an end-to-end check against a running X11 daemon (also `fake_keys`, `mover` helpers). Run the daemon with an isolated config: `XDG_CONFIG_HOME=<tmp> sourizz --no-tray`. The probe only touches its own test window, but a human moving the real mouse during the run makes it fail.
+`examples/x11_probe.rs` is an end-to-end check against a running X11 daemon (also `fake_keys`, `mover` helpers). Run the daemon with an isolated config: `XDG_CONFIG_HOME=<tmp> sourizz --no-tray`, with `[ring]\npulse_speed = 0.0` in `<tmp>/sourizz/config.toml` (the probe assumes the default 56 px ring, and the pulse changes the pixel counts of its ghost-pixel check); use absolute paths and check the daemon is up before starting the probe. The probe only touches its own test window, but a human moving the real mouse during the run makes it fail.
 
 ## Architecture
 

@@ -71,7 +71,7 @@ Prérequis à l'exécution :
 |---|---|
 | `Ctrl+Alt+Shift+M` | Interrupteur général |
 | `Ctrl+Alt+Shift+S` | Projecteur |
-| `Ctrl+Alt+Shift+R` | Anneau |
+| `Ctrl+Alt+Shift+O` | Anneau |
 | `Ctrl+Alt+Shift+T` | Traînée |
 | `Ctrl+Alt+Shift+C` | Effets de clic |
 | `Ctrl+Alt+Shift+K` | Frappes |
@@ -79,6 +79,8 @@ Prérequis à l'exécution :
 | `Ctrl+Alt+Shift+A` | Mode annotation |
 | `Ctrl+Alt+Shift+X` | Effacer les annotations |
 | `Ctrl+Alt+Shift+Y` | Montrer l'effet de clic à l'emplacement du pointeur |
+
+L'anneau avait pour raccourci par défaut `Ctrl+Alt+Shift+R`, que GNOME Shell réserve à son interface d'enregistrement d'écran ; un fichier de configuration qui l'a déjà le conserve, donc changez-le dans la fenêtre de réglages sous GNOME.
 
 Le mode annotation et l'aperçu du clic activent ce dont ils ont besoin (l'interrupteur général, et les effets de clic pour l'aperçu) lorsque c'est éteint.
 
@@ -191,7 +193,7 @@ En toute honnêteté sur la vérification :
 
 - **Automatisé :** 57 tests unitaires (configuration, moteur, suivi des zones à redessiner, invariants de rendu, gestion des touches avec de vraies dispositions AZERTY/QWERTY, traduction evdev, analyse des commandes). En particulier, un test de propriété vérifie que le redessin incrémental est identique au pixel près à un redessin complet pour chaque forme de projecteur, style de traînée et effet de clic.
 - **X11 :** éprouvé en conditions réelles sous Debian 13, KDE Plasma 6.3, deux écrans — fenêtres de surcouche, traversée des clics, dessin de l'anneau / des clics / des traînées, aucun pixel fantôme après un mouvement rapide, raccourci global, ligne de commande, rechargement de la configuration en direct, menu de l'icône via D-Bus, fenêtre de réglages.
-- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland : l'anneau suit le pointeur grâce au script KWin, et les effets de clic, leur son, l'affichage des touches, le projecteur et le mode annotation fonctionnent avec la vraie souris, le pavé tactile et le clavier. **GNOME 48.7 (Debian 13), session Wayland :** Sourizz refuse de démarrer avec un message clair, comme prévu, et le backend X11 via XWayland ne suit le pointeur que sur les fenêtres X11. **Non testé** en vrai HiDPI, dans une session GNOME Xorg, sous Hyprland, sway, niri ou d'autres compositeurs.
+- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland : l'anneau suit le pointeur grâce au script KWin, et les effets de clic, leur son, l'affichage des touches, le projecteur et le mode annotation fonctionnent avec la vraie souris, le pavé tactile et le clavier. **GNOME 48.7 (Debian 13), session Wayland :** Sourizz refuse de démarrer avec un message clair, comme prévu, et le backend X11 via XWayland ne suit le pointeur que sur les fenêtres X11. **GNOME 48.7 sous Xorg :** le backend X11 passe les 12 vérifications de `examples/x11_probe.rs` (lancé contre un démon à configuration par défaut, pulsation de l'anneau coupée), les raccourcis globaux fonctionnent, ainsi que le projecteur, l'affichage des touches, les effets et sons de clic, le mode annotation et la fenêtre de réglages ; il n'y a pas d'icône de notification sans l'extension AppIndicator, comme indiqué plus haut. **Non testé** en vrai HiDPI, sous Hyprland, sway, niri ou d'autres compositeurs.
 
 Considérez la prise en charge de Wayland comme une première version solide qui demande davantage de tests sur le terrain ; les rapports de bogues accompagnés de la sortie de `sourizz -vv` sont bienvenus.
 

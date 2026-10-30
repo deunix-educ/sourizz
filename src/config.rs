@@ -362,7 +362,8 @@ impl Default for Hotkeys {
         Self {
             toggle_all: k("M"),
             spotlight: k("S"),
-            ring: k("R"),
+            // Not "R": GNOME Shell uses Ctrl+Alt+Shift+R for its screen-recording interface.
+            ring: k("O"),
             trail: k("T"),
             clicks: k("C"),
             keystrokes: k("K"),

@@ -23,7 +23,7 @@ Collect first, in each session, and paste the output back:
 `echo $XDG_SESSION_TYPE $XDG_CURRENT_DESKTOP; gnome-shell --version; sourizz doctor; wayland-info | grep -i layer`
 
 1. **GNOME (Wayland session). DONE on 2026-10-30.** The Wayland backend refuses to start with a clear message (exit code 1; the autostart log shows the same). With `sourizz --backend x11` (XWayland) the daemon starts, the ring follows the pointer inside an `xterm` and stays frozen over native Wayland windows, so XWayland is not a workaround. Both READMEs now say so. Not checked: whether the overlay itself is drawn above native Wayland windows.
-2. **GNOME on Xorg.** Everything should work through the X11 backend: ring, trail, clicks, sound, keystrokes, spotlight, annotation, global hotkeys, settings window. Check the tray: the README says GNOME needs the *AppIndicator* extension; verify that claim (Debian package `gnome-shell-extension-appindicator`).
+2. **GNOME on Xorg. DONE on 2026-10-30.** `x11_probe` passes 12/12 (isolated default config, pulse off), global hotkeys work, Denis confirmed spotlight, keystrokes, clicks, sound, annotation and the settings window. No tray icon without the AppIndicator extension (not installed, so the claim is consistent; the extension itself was not tried). The default ring hotkey `Ctrl+Alt+Shift+R` collides with GNOME's screen-recording UI and was changed to `O`; Denis's own config file still has `R`.
 3. If anything differs from the README, fix both READMEs.
 
 ## Open decision: GNOME Wayland support

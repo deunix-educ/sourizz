@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> **Pending:** a field test on Wayland and GNOME is planned on another machine. If that is why you are here, read `docs/handoff-wayland-gnome.md` first.
+> **Pending:** the GNOME part of the field test is still to do (KDE Wayland is done). If that is why you are here, read `docs/handoff-wayland-gnome.md` first.
 
 ## What this is
 

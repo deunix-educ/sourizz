@@ -1,41 +1,40 @@
-# Handoff: field-testing Wayland and GNOME on another machine
+# Handoff: GNOME field test (second part)
 
-Written on the X11/KDE dev machine on 2026-10-30 so that a Claude Code session on a second machine can pick the work up.
-The user (Denis) writes French: answer in French, keep `README.md` and `README.fr.md` in sync.
-Claude's per-machine memory does **not** travel: everything needed is in this file and in `CLAUDE.md`.
+Updated on 2026-10-30 on the field-test machine (`DNIX`, Debian 13, KDE Plasma 6.3.6, Intel UHD 630 + NVIDIA MX250). The user (Denis) writes French: answer in French, keep `README.md` and `README.fr.md` in sync.
+Claude's per-machine memory does not travel, but the conversation of the previous session is kept per directory: resume it with `claude --continue` (or `claude --resume` to pick it) from `~/src/sourizz`.
 
-## Setup on the other machine
+## Where things stand
 
-- Repo: `https://github.com/deunix-educ/sourizz` (private, branch `main`). Log in first (`gh auth login`, or an SSH key).
-- Commit identity (the repo-local config does not travel): `git config user.name "Denis Defolie"` and `git config user.email denis.defolie@pm.me`.
-- Build and install: `./install.sh --yes` (installs Rust with rustup if missing; needs a C linker and curl/wget; no `-dev` packages). For development use `cargo build --release` and run `target/release/sourizz`.
-- Do not start two daemons on one session: `sourizz quit` the installed one first, or give the test one its own `XDG_RUNTIME_DIR`.
+- **KDE Plasma Wayland on real hardware: done.** Overlay, ring, trail, click effects, click sounds, keystroke display, spotlight and annotation mode were confirmed by Denis in a real session. Both READMEs say so.
+- **The "pointer freezes" bug is fixed** (commit `57bea85`): `Devices::rescan` reopened every uninteresting `/dev/input/event*` node every 3 s, and an open costs 25-70 ms on this machine (about 650 ms per rescan). The lesson and the method are in `CLAUDE.md`; `examples/layer_probe.rs` is the bisection tool.
+- **GNOME 48.7 is installed next to KDE** (`gnome-shell`, `gnome-session`, `gnome-session-xsession`, `gdm3`). SDDM stays the login manager. It lists four GNOME entries: `GNOME on Wayland` and `GNOME on Xorg` are unambiguous; the two plain `GNOME` entries (one from `wayland-sessions`, one from `xsessions`) look identical, so avoid them and pick one of the other two.
+- Debian 13 still ships the X11 session for GNOME 48. The README sentence "log in with GNOME on Xorg" is therefore right for this release; it would only be wrong from GNOME 49 on (Ubuntu 25.10, Fedora 43).
 
-## What is verified, and what is not
+## Things to know before testing
 
-- **X11:** exercised live on KDE Plasma 6.3 (hotkeys, settings window, tray, CLI).
-- **Wayland:** only against a nested KWin 6.3. The evdev path (real mouse and keyboard) is unit-tested only. Never run on Hyprland, sway, niri, GNOME, or real HiDPI.
-- **GNOME:** Mutter has no `wlr-layer-shell`, so the Wayland backend refuses to start (`src/wayland.rs`, message "this compositor does not support wlr-layer-shell"). The README tells GNOME users to log in with "GNOME on Xorg". No GNOME Shell extension exists.
+- `~/.config/autostart/sourizz.desktop` exists: **a daemon starts by itself at each login.** Run `pgrep -ax sourizz`, then `sourizz quit`, before every manual test, and do not run two daemons on one session.
+- The global hotkeys (`Ctrl+Alt+Shift+M`, `S`, `K`, `A`, …) toggle effects in the live daemon. Denis tested them by hand, which changed `enabled`, `spotlight` and `keystrokes` behind our back more than once. If a status looks odd, ask before assuming a bug, and note the md5 of `~/.config/sourizz/config.toml` with each measurement.
+- Normal state: `enabled=on ring=on trail=on clicks=on sound=on shake=on`, `spotlight=off keystrokes=off focus=off`.
+- Do not suggest adding the user to the `input` group again: it is already done and `sourizz doctor` reports it.
 
-## Test plan
+## Test plan for the GNOME sessions
 
-1. Collect the facts and paste them back: `echo $XDG_SESSION_TYPE $XDG_CURRENT_DESKTOP`, the compositor version (`gnome-shell --version`, `kwin_wayland --version`, `Hyprland --version`, …), `sourizz doctor`, and `wayland-info | grep -i layer` (package `wayland-utils`).
-2. Run `sourizz -vv --no-tray 2>&1 | tee sourizz.log` and keep the log.
-3. **GNOME Wayland (expected: refuses to start).** Confirm the error is clear. Then try `sourizz --backend x11` (XWayland) and record what happens: is the overlay visible above native Wayland windows, does the ring follow the pointer over them or only over X11 windows? The README claims the latter; that claim is unverified.
-4. **Check the "GNOME on Xorg" advice.** GNOME 49 and later no longer ship the X11 session (Ubuntu 25.10 and Fedora 43 dropped it). If the machine's GNOME has no Xorg session, the README sentence in both languages is wrong for that release: tell Denis, then fix both READMEs.
-5. **Any layer-shell compositor (KDE Wayland, Hyprland, sway, …).** Check: overlay visible and click-through; ring follows the pointer and which pointer source is used (KWin script, Hyprland IPC, or the drifting estimate); two monitors; scale above 1; annotation mode (`sourizz annotate`) grabs and releases cleanly; hotkeys bound in the desktop as `sourizz toggle spotlight` etc.
-6. Clicks, click sounds, keystrokes and hold-to-draw need `/dev/input` access, i.e. `sudo usermod -aG input "$USER"` and a new login. That is a security trade-off (any program of the account can then read keystrokes): ask Denis before suggesting it.
-7. No input devices or no second machine? `CLAUDE.md` ("Testing Wayland without a Wayland session") explains the nested KWin setup with `SOURIZZ_FAKE_POINTER`.
+Collect first, in each session, and paste the output back:
+`echo $XDG_SESSION_TYPE $XDG_CURRENT_DESKTOP; gnome-shell --version; sourizz doctor; wayland-info | grep -i layer`
 
-## Open decision: GNOME support
+1. **GNOME (Wayland session).** Expected: the Wayland backend refuses to start with "this compositor does not support wlr-layer-shell" (`src/wayland.rs`). Confirm the message is clear. Then try `sourizz --backend x11` (XWayland) and record: is the overlay visible above native Wayland windows? Does the ring follow the pointer over them, or only over X11 windows? The README claims the latter; that claim is unverified.
+2. **GNOME on Xorg.** Everything should work through the X11 backend: ring, trail, clicks, sound, keystrokes, spotlight, annotation, global hotkeys, settings window. Check the tray: the README says GNOME needs the *AppIndicator* extension; verify that claim (Debian package `gnome-shell-extension-appindicator`).
+3. If anything differs from the README, fix both READMEs.
 
-Not started, and not to be started without Denis agreeing on a design. The options to discuss:
+## Open decision: GNOME Wayland support
+
+Not started, and not to be started without Denis agreeing on a design. Options to discuss once step 1 is done:
 
 - A GNOME Shell extension (GJS) that draws or feeds the overlay, reads `global.get_pointer()` and registers keybindings, talking to the daemon over its Unix socket (`src/ipc.rs`).
-- Documenting GNOME as unsupported, with the X11 session as the only route (only if step 4 shows that route still exists).
+- Documenting GNOME Wayland as unsupported, with the X11 session as the only route (valid for GNOME 48; to be revisited for 49 and later).
 
-Use the test results above to choose, and say plainly what each option costs.
+Say plainly what each option costs.
 
 ## When done
 
-Update "What was tested" in both READMEs and the verification lines in `CLAUDE.md`, run `cargo test`, `cargo clippy --all-targets` and `cargo fmt`, then commit and push. Remove this file once its content has been absorbed.
+Update "What was tested" in both READMEs and the verification lines in `CLAUDE.md`, run `cargo test`, `cargo clippy --all-targets` and `cargo fmt`, then commit and push. Remove this file once its content has been absorbed, and drop the "Pending" line at the top of `CLAUDE.md`.

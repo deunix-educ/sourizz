@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Sourizz Settings
+Name[fr]=Réglages de Sourizz
+Comment=Configure the Sourizz cursor highlighter
+Comment[fr]=Configurer la mise en valeur du curseur Sourizz
+Exec=sourizz-settings
+Icon=sourizz
+Terminal=false
+Categories=Settings;Utility;

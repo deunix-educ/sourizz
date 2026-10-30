@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Sourizz
+GenericName=Cursor highlighter
+GenericName[fr]=Mise en valeur du curseur
+Comment=Spotlight, ring, trails, click effects and annotations for your pointer
+Comment[fr]=Projecteur, anneau, traînées, effets de clic et annotations pour votre pointeur
+Exec=sourizz
+Icon=sourizz
+Terminal=false
+Categories=Utility;Accessibility;
+Keywords=cursor;mouse;pointer;highlight;spotlight;presentation;screencast;curseur;souris;

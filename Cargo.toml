@@ -1,0 +1,52 @@
+[package]
+name = "sourizz"
+version = "0.1.0"
+edition = "2024"
+description = "Cursor highlighter for Linux: spotlight, ring, trails, click effects, keystrokes and on-screen drawing (X11 and Wayland)"
+license = "AGPL-3.0-or-later"
+readme = "README.md"
+keywords = ["cursor", "highlighter", "screencast", "wayland", "x11"]
+categories = ["accessibility", "gui"]
+
+[dependencies]
+anyhow = "1.0.104"
+clap = { version = "4.6.7", features = ["derive"] }
+eframe = { version = "0.37.0", default-features = false, features = ["glow", "x11", "wayland", "default_fonts"], optional = true }
+env_logger = "0.11.11"
+evdev = "0.13.2"
+fontdue = "0.9.5"
+ksni = { version = "0.3.7", default-features = false, features = ["async-io", "blocking"] }
+log = "0.4.34"
+rustix = { version = "1.1.6", features = ["event", "pipe", "net", "fs"] }
+serde = { version = "1.0.229", features = ["derive"] }
+signal-hook = "0.4.5"
+smithay-client-toolkit = { version = "0.21.1", default-features = false }
+tiny-skia = { version = "0.12.0", features = ["png-format"] }
+toml = "1.1.8"
+wayland-client = "0.31.15"
+x11rb = { version = "0.14.0", features = ["shape", "randr", "xinput", "xtest", "xfixes", "xkb", "render"] }
+xkbcommon-dl = "0.4.2"
+zbus = { version = "5", default-features = false, features = ["async-io", "blocking-api"] }
+
+
+[features]
+default = ["gui"]
+gui = ["dep:eframe"]
+
+[[bin]]
+name = "sourizz"
+path = "src/main.rs"
+
+[[bin]]
+name = "sourizz-settings"
+path = "src/bin/settings.rs"
+required-features = ["gui"]
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+strip = true
+opt-level = 3
+
+[profile.test]
+opt-level = 1

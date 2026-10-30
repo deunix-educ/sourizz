@@ -148,7 +148,7 @@ Sourizz has one drawing engine and two display backends; it picks the right one 
 | sway, river, niri, labwc, COSMIC… | yes | *estimated* (see below) | needs the `input` group | – |
 | **GNOME, Wayland** | **no** — Mutter has no layer-shell | – | – | – |
 
-On GNOME, log in with a **"GNOME on Xorg"** session, or use another desktop. (A GNOME Shell extension could do it natively; that is not written yet.)
+On GNOME, log in with a **"GNOME on Xorg"** session, or use another desktop. (A GNOME Shell extension could do it natively; that is not written yet.) Running `sourizz --backend x11` inside a GNOME Wayland session (through XWayland) starts, but is not a workaround: the pointer is only tracked while it is over an X11 window, and the ring stays frozen over native Wayland windows (tested on GNOME 48.7).
 
 ### Choosing the backend
 
@@ -191,7 +191,7 @@ Being honest about verification:
 
 - **Automated:** 57 unit tests (config, engine, damage tracking, rendering invariants, key handling with real AZERTY/QWERTY layouts, evdev translation, IPC parsing). Notably, a property test checks that incremental repainting is pixel-identical to a full repaint for every spotlight shape, trail style and click effect.
 - **X11:** exercised live on Debian 13, KDE Plasma 6.3, two monitors — overlay windows, click-through, ring/click/trail drawing, no ghost pixels after fast motion, global hotkey, CLI, live config reload, tray menu over D-Bus, settings window.
-- **Wayland:** exercised against a nested **KWin 6.3** compositor — layer-shell overlay, ring/spotlight/annotation toolbar rendering, annotation mode capture, the KWin pointer script. Also run in a real KDE Plasma 6.3.6 Wayland session: the ring follows the pointer through the KWin script, and the click effects, click sounds, keystroke display, spotlight and annotation mode work with the real mouse, touchpad and keyboard. **Not tested** on real HiDPI, GNOME, or Hyprland, sway, niri or other compositors.
+- **Wayland:** exercised against a nested **KWin 6.3** compositor — layer-shell overlay, ring/spotlight/annotation toolbar rendering, annotation mode capture, the KWin pointer script. Also run in a real KDE Plasma 6.3.6 Wayland session: the ring follows the pointer through the KWin script, and the click effects, click sounds, keystroke display, spotlight and annotation mode work with the real mouse, touchpad and keyboard. **GNOME 48.7 (Debian 13), Wayland session:** Sourizz refuses to start with a clear message, as intended, and the X11 backend through XWayland only follows the pointer over X11 windows. **Not tested** on real HiDPI, a GNOME Xorg session, or Hyprland, sway, niri or other compositors.
 
 Treat Wayland support as a solid first version that needs more field testing; bug reports with `sourizz -vv` output are welcome.
 

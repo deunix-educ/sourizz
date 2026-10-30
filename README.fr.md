@@ -148,7 +148,7 @@ Sourizz a un seul moteur de dessin et deux backends d'affichage ; il choisit le 
 | sway, river, niri, labwc, COSMIC… | oui | *estimée* (voir ci-dessous) | demande le groupe `input` | – |
 | **GNOME, Wayland** | **non** — Mutter n'a pas de layer-shell | – | – | – |
 
-Sous GNOME, ouvrez une session **« GNOME sur Xorg »**, ou utilisez un autre bureau. (Une extension GNOME Shell pourrait le faire nativement ; elle n'est pas encore écrite.)
+Sous GNOME, ouvrez une session **« GNOME sur Xorg »**, ou utilisez un autre bureau. (Une extension GNOME Shell pourrait le faire nativement ; elle n'est pas encore écrite.) Lancer `sourizz --backend x11` dans une session GNOME Wayland (via XWayland) démarre, mais ne contourne pas le problème : le pointeur n'est suivi que lorsqu'il survole une fenêtre X11, et l'anneau reste figé au-dessus des fenêtres Wayland natives (testé sur GNOME 48.7).
 
 ### Choisir le backend
 
@@ -191,7 +191,7 @@ En toute honnêteté sur la vérification :
 
 - **Automatisé :** 57 tests unitaires (configuration, moteur, suivi des zones à redessiner, invariants de rendu, gestion des touches avec de vraies dispositions AZERTY/QWERTY, traduction evdev, analyse des commandes). En particulier, un test de propriété vérifie que le redessin incrémental est identique au pixel près à un redessin complet pour chaque forme de projecteur, style de traînée et effet de clic.
 - **X11 :** éprouvé en conditions réelles sous Debian 13, KDE Plasma 6.3, deux écrans — fenêtres de surcouche, traversée des clics, dessin de l'anneau / des clics / des traînées, aucun pixel fantôme après un mouvement rapide, raccourci global, ligne de commande, rechargement de la configuration en direct, menu de l'icône via D-Bus, fenêtre de réglages.
-- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland : l'anneau suit le pointeur grâce au script KWin, et les effets de clic, leur son, l'affichage des touches, le projecteur et le mode annotation fonctionnent avec la vraie souris, le pavé tactile et le clavier. **Non testé** en vrai HiDPI, sous GNOME, Hyprland, sway, niri ou d'autres compositeurs.
+- **Wayland :** éprouvé contre un compositeur **KWin 6.3** imbriqué — surcouche layer-shell, rendu de l'anneau / du projecteur / de la barre d'annotation, capture du mode annotation, script KWin de position du pointeur. Lancé aussi dans une vraie session KDE Plasma 6.3.6 Wayland : l'anneau suit le pointeur grâce au script KWin, et les effets de clic, leur son, l'affichage des touches, le projecteur et le mode annotation fonctionnent avec la vraie souris, le pavé tactile et le clavier. **GNOME 48.7 (Debian 13), session Wayland :** Sourizz refuse de démarrer avec un message clair, comme prévu, et le backend X11 via XWayland ne suit le pointeur que sur les fenêtres X11. **Non testé** en vrai HiDPI, dans une session GNOME Xorg, sous Hyprland, sway, niri ou d'autres compositeurs.
 
 Considérez la prise en charge de Wayland comme une première version solide qui demande davantage de tests sur le terrain ; les rapports de bogues accompagnés de la sortie de `sourizz -vv` sont bienvenus.
 

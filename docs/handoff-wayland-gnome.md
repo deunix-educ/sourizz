@@ -22,7 +22,7 @@ Claude's per-machine memory does not travel, but the conversation of the previou
 Collect first, in each session, and paste the output back:
 `echo $XDG_SESSION_TYPE $XDG_CURRENT_DESKTOP; gnome-shell --version; sourizz doctor; wayland-info | grep -i layer`
 
-1. **GNOME (Wayland session).** Expected: the Wayland backend refuses to start with "this compositor does not support wlr-layer-shell" (`src/wayland.rs`). Confirm the message is clear. Then try `sourizz --backend x11` (XWayland) and record: is the overlay visible above native Wayland windows? Does the ring follow the pointer over them, or only over X11 windows? The README claims the latter; that claim is unverified.
+1. **GNOME (Wayland session). DONE on 2026-10-30.** The Wayland backend refuses to start with a clear message (exit code 1; the autostart log shows the same). With `sourizz --backend x11` (XWayland) the daemon starts, the ring follows the pointer inside an `xterm` and stays frozen over native Wayland windows, so XWayland is not a workaround. Both READMEs now say so. Not checked: whether the overlay itself is drawn above native Wayland windows.
 2. **GNOME on Xorg.** Everything should work through the X11 backend: ring, trail, clicks, sound, keystrokes, spotlight, annotation, global hotkeys, settings window. Check the tray: the README says GNOME needs the *AppIndicator* extension; verify that claim (Debian package `gnome-shell-extension-appindicator`).
 3. If anything differs from the README, fix both READMEs.
 
